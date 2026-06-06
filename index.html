@@ -40,16 +40,22 @@ body{font-family:'DM Sans',sans-serif;background:var(--white);color:var(--text);
 .sec-label{font-size:.68rem;letter-spacing:.25em;text-transform:uppercase;color:var(--gold);margin-bottom:12px;}
 .sec-title{font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,4vw,3rem);font-weight:300;line-height:1.15;margin-bottom:48px;}
 .sec-title em{font-style:italic;color:var(--sea);}
-.slider-wrap{position:relative;width:100%;overflow:hidden;}
-.slider-track{display:flex;transition:transform .45s cubic-bezier(.4,0,.2,1);}
-.slider-track img{width:100%;flex-shrink:0;height:520px;object-fit:cover;object-position:center;display:block;}
-.sl-btn{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.15);backdrop-filter:blur(4px);border:none;color:#fff;font-size:2rem;padding:14px 18px;cursor:pointer;z-index:2;transition:background .2s;line-height:1;}
-.sl-btn:hover{background:rgba(255,255,255,.3);}
-.sl-prev{left:12px;}.sl-next{right:12px;}
-.sl-dots{display:flex;justify-content:center;gap:8px;padding:16px 0;}
-.sl-dot{width:8px;height:8px;border-radius:50%;background:#ccc;cursor:pointer;transition:background .2s;}
-.sl-dot.active{background:var(--sea);}
-.sl-counter{position:absolute;bottom:16px;right:20px;background:rgba(0,0,0,.45);color:#fff;font-size:.78rem;padding:4px 10px;border-radius:20px;letter-spacing:.06em;}
+.gallery-outer{padding:0 0 32px;position:relative;}
+.carousel-wrap{overflow:hidden;width:100%;cursor:grab;user-select:none;}
+.carousel-wrap.dragging{cursor:grabbing;}
+.carousel-track{display:flex;gap:12px;padding:0 52px;transition:transform .5s cubic-bezier(.4,0,.2,1);will-change:transform;}
+.carousel-item{flex:0 0 auto;height:420px;overflow:hidden;position:relative;}
+.carousel-item.landscape{width:560px;}
+.carousel-item.portrait{width:315px;}
+.carousel-item img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s;}
+.carousel-item:hover img{transform:scale(1.03);}
+.sl-btn{position:absolute;top:50%;transform:translateY(-50%);background:#fff;border:none;color:var(--sea);font-size:1.4rem;width:44px;height:44px;cursor:pointer;z-index:2;transition:all .2s;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 12px rgba(0,0,0,.15);}
+.sl-btn:hover{box-shadow:0 4px 20px rgba(0,0,0,.22);transform:translateY(-50%) scale(1.05);}
+.sl-prev{left:16px;}.sl-next{right:16px;}
+.sl-dots{display:flex;justify-content:center;gap:7px;padding:20px 0 0;}
+.sl-dot{width:6px;height:6px;border-radius:50%;background:#d0d0d0;cursor:pointer;transition:all .25s;border:none;padding:0;}
+.sl-dot.active{background:var(--sea);width:22px;border-radius:3px;}
+.sl-counter{position:absolute;top:16px;right:68px;background:rgba(0,0,0,.4);color:#fff;font-size:.72rem;padding:4px 11px;border-radius:20px;letter-spacing:.06em;}
 .lb{position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.92);display:none;align-items:center;justify-content:center;}
 .lb.open{display:flex;}
 .lb img{max-width:90vw;max-height:90vh;object-fit:contain;}
@@ -111,6 +117,7 @@ footer{background:var(--dark);padding:36px 52px;display:flex;justify-content:spa
 .flogo{font-family:'Cormorant Garamond',serif;font-size:1.1rem;color:rgba(255,255,255,.45);}
 .fnote{font-size:.73rem;color:rgba(255,255,255,.22);text-align:right;line-height:1.6;}
 @media(max-width:900px){
+  
   .sec,.fsec,.psec,.calsec,.consec{padding:56px 20px;}
   .locsec{grid-template-columns:1fr;gap:32px;padding:56px 20px;}
   .fgrid{grid-template-columns:1fr 1fr;gap:2px;}
@@ -122,7 +129,13 @@ footer{background:var(--dark);padding:36px 52px;display:flex;justify-content:spa
   .hero-sub{font-size:.85rem;}
   .btn-p,.btn-o{padding:11px 20px;font-size:.72rem;}
   .sec-title{font-size:clamp(1.7rem,6vw,2.5rem);margin-bottom:32px;}
-  .slider-track img{height:280px;}
+  .carousel-track{padding:0 16px;gap:8px;}
+  .carousel-item.landscape{width:85vw;height:260px;}
+  .carousel-item.portrait{width:58vw;height:260px;}
+  .sl-prev{left:4px;}.sl-next{right:4px;}
+  .sl-btn{width:36px;height:36px;font-size:1.2rem;}
+  .sl-counter{top:10px;right:10px;}
+  .gallery-outer{padding:0 0 40px;}
   footer{flex-direction:column;gap:14px;}
   .fnote{text-align:center;}
   .lang-bar{padding:10px 16px;}
@@ -137,6 +150,7 @@ footer{background:var(--dark);padding:36px 52px;display:flex;justify-content:spa
 }
 @media(max-width:600px){
   .fgrid{grid-template-columns:1fr;}
+  
   .hero-cnt{padding:0 20px 48px;}
   .stats{right:16px;bottom:100px;}
 }
@@ -183,6 +197,156 @@ footer{background:var(--dark);padding:36px 52px;display:flex;justify-content:spa
 @media(max-width:600px){
   .price-table th,.price-table td{padding:14px 16px;}
   .price-table td:nth-child(2){font-size:1.3rem;}
+}
+
+/* ---- HIGHLIGHTS + BOOKING BLOCK ---- */
+.hb-section{padding:0 52px 80px;}
+.hb-inner{display:grid;grid-template-columns:1fr 400px;gap:48px;align-items:stretch;max-width:1280px;margin:0 auto;}
+.highlights{display:flex;flex-direction:column;gap:0;}
+.hl-item{display:flex;gap:20px;align-items:flex-start;padding:24px 0;border-bottom:1px solid #f0f0f0;}
+.hl-item:first-child{border-top:1px solid #f0f0f0;}
+.hl-icon{font-size:1.6rem;min-width:36px;margin-top:2px;}
+.hl-title{font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-weight:400;margin-bottom:4px;}
+.hl-desc{font-size:.86rem;color:#666;line-height:1.6;}
+
+/* Booking card */
+.book-card{border:1px solid #e8e8e8;padding:28px;position:sticky;top:72px;box-shadow:0 8px 40px rgba(0,0,0,.1);border-radius:4px;}
+.book-price-row{display:flex;align-items:baseline;gap:8px;margin-bottom:20px;}
+.book-amt{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:400;color:var(--sea);}
+.book-unit{font-size:.82rem;color:var(--muted);}
+.book-persons{margin-bottom:16px;}
+.book-persons label{font-size:.72rem;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:6px;}
+.book-persons select{width:100%;padding:10px 12px;border:1.5px solid #e0e0e0;font-family:'DM Sans',sans-serif;font-size:.9rem;background:#fff;cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;}
+.book-persons select:focus{outline:none;border-color:var(--sea);}
+.date-grid{display:grid;grid-template-columns:1fr 1fr;border:1.5px solid #e0e0e0;margin-bottom:16px;}
+.date-field{padding:10px 12px;cursor:pointer;transition:background .15s;}
+.date-field:first-child{border-right:1px solid #e0e0e0;}
+.date-field label{font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:4px;cursor:pointer;}
+.date-field input[type=date]{width:100%;border:none;font-family:'DM Sans',sans-serif;font-size:.88rem;background:transparent;cursor:pointer;padding:0;}
+.date-field input[type=date]:focus{outline:none;}
+.date-field:focus-within{background:var(--sea-pale);}
+.book-breakdown{background:#f9f7f4;padding:16px;margin-bottom:16px;display:none;}
+.book-breakdown.visible{display:block;}
+.bb-row{display:flex;justify-content:space-between;font-size:.88rem;padding:5px 0;color:var(--text);}
+.bb-row.total{font-weight:500;font-size:.95rem;border-top:1px solid #e0e0e0;margin-top:8px;padding-top:12px;}
+.bb-row.total .bb-label{font-family:'Cormorant Garamond',serif;font-size:1.1rem;}
+.bb-row.total .bb-val{font-family:'Cormorant Garamond',serif;font-size:1.2rem;color:var(--sea);}
+.book-btn{width:100%;padding:16px;background:var(--sea);color:#fff;border:none;font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:500;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all .2s;margin-bottom:12px;box-shadow:0 4px 16px rgba(58,107,138,.3);border-radius:2px;}
+.book-btn:hover{background:var(--sea-l);box-shadow:0 6px 24px rgba(58,107,138,.4);transform:translateY(-1px);}
+.book-hint{font-size:.78rem;color:var(--muted);text-align:center;line-height:1.5;}
+.book-error{font-size:.82rem;color:#c0392b;margin-bottom:10px;display:none;padding:8px 12px;background:#fdf0ef;}
+.book-error.visible{display:block;}
+
+@media(max-width:900px){
+  .hb-section{padding:0 20px 64px;}
+  .hb-inner{grid-template-columns:1fr;gap:40px;}
+  .book-card{position:static;box-shadow:0 2px 16px rgba(0,0,0,.08);}
+}
+
+.book-desc{font-size:.93rem;line-height:1.75;color:#555;max-width:480px;}
+
+/* Person buttons */
+.person-btns{display:flex;gap:8px;margin-top:8px;}
+.person-btn{width:42px;height:42px;border:1.5px solid #e0e0e0;background:#fff;font-family:'DM Sans',sans-serif;font-size:.9rem;cursor:pointer;transition:all .18s;border-radius:3px;box-shadow:0 1px 4px rgba(0,0,0,.06);}
+.person-btn:hover{border-color:var(--sea);box-shadow:0 2px 8px rgba(58,107,138,.15);}
+.person-btn.active{background:var(--sea);color:#fff;border-color:var(--sea);box-shadow:0 3px 10px rgba(58,107,138,.3);}
+
+/* Calendar picker */
+.cal-picker{border:1.5px solid #e8e8e8;padding:12px;margin:12px 0;background:#fefefe;}
+.cp-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
+.cp-month{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:400;letter-spacing:.02em;}
+.cp-nav{background:none;border:1px solid #e0e0e0;width:30px;height:30px;cursor:pointer;font-size:.9rem;display:flex;align-items:center;justify-content:center;transition:border-color .15s;}
+.cp-nav:hover{border-color:var(--sea);color:var(--sea);}
+.cp-days-header{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:4px;}
+.cp-dh{text-align:center;font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:4px 0;}
+.cp-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;}
+.cp-cell{text-align:center;padding:5px 2px;font-size:.81rem;cursor:pointer;border-radius:2px;transition:all .12s;position:relative;}
+.cp-cell.empty{cursor:default;}
+.cp-cell.disabled{color:#ccc;cursor:not-allowed;}
+.cp-cell.avail:hover{background:var(--sea-pale);color:var(--sea);}
+.cp-cell.checkin{background:var(--sea);color:#fff;border-radius:2px 0 0 2px;}
+.cp-cell.checkout{background:var(--sea);color:#fff;border-radius:0 2px 2px 0;}
+.cp-cell.inrange{background:var(--sea-pale);color:var(--sea);}
+.cp-cell.today{font-weight:600;}
+.cp-hint{font-size:.75rem;color:var(--muted);text-align:center;margin-top:10px;letter-spacing:.04em;}
+
+/* Book breakdown */
+.book-breakdown{background:#f9f7f4;padding:14px 16px;margin-bottom:16px;display:none;}
+.book-breakdown.visible{display:block;}
+.bb-row{display:flex;justify-content:space-between;font-size:.87rem;padding:4px 0;}
+.bb-row.total{font-weight:500;font-size:.95rem;border-top:1px solid #e0e0e0;margin-top:8px;padding-top:10px;}
+.bb-row.total .bb-label{font-family:'Cormorant Garamond',serif;font-size:1.05rem;}
+.bb-row.total .bb-val{font-family:'Cormorant Garamond',serif;font-size:1.15rem;color:var(--sea);}
+
+@media(max-width:900px){
+  .person-btns{gap:6px;}
+  .person-btn{width:38px;height:38px;}
+}
+
+@media(max-width:900px){
+  }
+
+
+/* ── FEATURES GRID ── */
+
+
+
+
+
+
+
+
+
+/* ── FEATURES GRID ── */
+.cf-section-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.3rem;font-weight:400;
+  color:var(--muted);
+  letter-spacing:.18em;text-transform:uppercase;
+  font-size:.72rem;
+  margin-bottom:20px;
+}
+.hb-left{display:flex;flex-direction:column;}
+.compact-features{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  grid-template-rows:repeat(3,1fr);
+  gap:8px;
+  flex:1;
+  background:transparent;
+}
+.cf-item{
+  display:flex;flex-direction:column;
+  gap:10px;
+  padding:24px 20px;
+  background:#fff;
+  border:1px solid #efefef;
+  margin:4px;
+  transition:box-shadow .2s, transform .15s;
+}
+.cf-item:hover{
+  box-shadow:0 4px 20px rgba(0,0,0,.07);
+  transform:translateY(-2px);
+}
+.compact-features{
+  gap:0 !important;
+  background:transparent !important;
+}
+.cf-icon{
+  font-size:1.3rem;
+  line-height:1;
+  margin-bottom:4px;
+}
+.cf-title{
+  font-size:.85rem;
+  font-weight:600;
+  color:var(--text);
+  line-height:1.3;
+}
+.cf-desc{
+  font-size:.76rem;
+  color:#aaa;
+  line-height:1.5;
 }
 </style>
   <!-- Open Graph / Social Media Preview -->
@@ -233,13 +397,15 @@ footer{background:var(--dark);padding:36px 52px;display:flex;justify-content:spa
 <section class="sec" id="gallery">
   <div class="sec-label">Fotogalerie</div>
   <h2 class="sec-title" id="gallTitle">Die Wohnung im <em>&Uuml;berblick</em></h2>
-  <div class="slider-wrap" id="sliderWrap">
-    <div class="slider-track" id="sliderTrack"></div>
+  <div class="gallery-outer">
+    <div class="carousel-wrap" id="carouselWrap">
+      <div class="carousel-track" id="sliderTrack"></div>
+    </div>
     <button class="sl-btn sl-prev" onclick="slNav(-1)">&#8249;</button>
     <button class="sl-btn sl-next" onclick="slNav(1)">&#8250;</button>
     <div class="sl-counter" id="slCounter">1 / 9</div>
+    <div class="sl-dots" id="slDots"></div>
   </div>
-  <div class="sl-dots" id="slDots"></div>
 </section>
 
 <div class="lb" id="lb">
@@ -249,10 +415,61 @@ footer{background:var(--dark);padding:36px 52px;display:flex;justify-content:spa
   <button class="lb-nav lb-next" onclick="lbNav(1)">&#8250;</button>
 </div>
 
-<section class="fsec" id="features">
-  <div class="sec-label">Ausstattung</div>
-  <h2 class="sec-title" id="featTitle">Was dich <em>erwartet</em></h2>
-  <div class="fgrid" id="featGrid"></div>
+<section class="hb-section" id="booking">
+  <div class="hb-inner">
+
+    <!-- LEFT: compact features -->
+    <div class="hb-left">
+      <h3 class="cf-section-title" id="cfTitle">Was dich erwartet</h3>
+      <div class="compact-features" id="compactFeats"></div>
+    </div>
+
+    <!-- RIGHT: Booking card -->
+    <div class="book-card">
+
+      <div class="book-price-row">
+        <span class="book-amt" id="bookAmt">1.000 €</span>
+        <span class="book-unit" id="bookUnit">/ Woche · 2 Personen</span>
+      </div>
+
+      <!-- Person selector -->
+      <div class="book-persons">
+        <label id="bookPersonsLabel">Personen</label>
+        <div class="person-btns" id="personBtns">
+          <button class="person-btn active" onclick="setPersn(2)">2</button>
+          <button class="person-btn" onclick="setPersn(3)">3</button>
+          <button class="person-btn" onclick="setPersn(4)">4</button>
+          <button class="person-btn" onclick="setPersn(5)">5</button>
+          <button class="person-btn" onclick="setPersn(6)">6</button>
+        </div>
+      </div>
+
+      <!-- Inline calendar date picker -->
+      <div class="cal-picker" id="calPicker">
+        <div class="cp-header">
+          <button class="cp-nav" onclick="cpNav(-1)">&#8592;</button>
+          <span class="cp-month" id="cpMonth"></span>
+          <button class="cp-nav" onclick="cpNav(1)">&#8594;</button>
+        </div>
+        <div class="cp-days-header" id="cpDaysHeader"></div>
+        <div class="cp-grid" id="cpGrid"></div>
+        <div class="cp-hint" id="cpHint">Check-in wählen</div>
+      </div>
+
+      <div class="book-error" id="bookError"></div>
+
+      <div class="book-breakdown" id="bookBreakdown">
+        <div class="bb-row"><span class="bb-label" id="bb1l"></span><span class="bb-val" id="bb1v"></span></div>
+        <div class="bb-row" id="bbMonthRow" style="display:none"><span class="bb-label" id="bb2l"></span><span class="bb-val" id="bb2v" style="color:#2a7a4b;font-weight:500;"></span></div>
+        <div class="bb-row total"><span class="bb-label" id="bbtl">Gesamt</span><span class="bb-val" id="bbTotal"></span></div>
+      </div>
+
+      <button class="book-btn" id="bookBtn" onclick="sendInquiry()">Anfrage senden</button>
+      <div class="month-hint" id="monthHint" style="display:none">🏷️ <strong>Monatsrabatt:</strong> Bei 4+ Wochen sparst du bis zu 1.000 €.</div>
+      <div class="book-hint" id="bookHint">Du wirst nicht sofort belastet – wir melden uns per E-Mail.</div>
+    </div>
+
+  </div>
 </section>
 
 <section class="map-section" id="map">
@@ -266,53 +483,6 @@ footer{background:var(--dark);padding:36px 52px;display:flex;justify-content:spa
     <div class="map-overlay-label">
       <div class="mol-title">Casa dell&rsquo;Arancio</div>
       <div class="mol-addr">Via dell&rsquo;Arancio 12, Casuzze (RG)</div>
-    </div>
-  </div>
-</section>
-
-
-<section class="psec" id="pricing">
-  <div style="text-align:center">
-    <div class="sec-label">Preis</div>
-    <h2 class="sec-title" id="priceTitle">Einfach &amp; <em>transparent</em></h2>
-  </div>
-  <div class="price-table-wrap">
-    <table class="price-table" id="priceTable">
-      <thead>
-        <tr>
-          <th id="pth1">Personen</th>
-          <th id="pth2">pro Woche</th>
-          <th id="pth3">pro Nacht</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr><td>2</td><td>1.000 &euro;</td><td>143 &euro;</td></tr>
-        <tr><td>3</td><td>1.100 &euro;</td><td>157 &euro;</td></tr>
-        <tr><td>4</td><td>1.200 &euro;</td><td>171 &euro;</td></tr>
-        <tr><td>5</td><td>1.350 &euro;</td><td>193 &euro;</td></tr>
-        <tr class="row-highlight"><td>6</td><td>1.500 &euro;</td><td>214 &euro;</td></tr>
-      </tbody>
-    </table>
-    <div class="price-note" id="priceNote">Mindestaufenthalt 1 Woche &middot; Bettw&auml;sche &amp; Handt&uuml;cher inklusive &middot; Monatsangebot auf Anfrage</div>
-    <div class="price-avail" id="priceAvail">Verf&uuml;gbar 1. Juli &ndash; 30. September</div>
-  </div>
-</section>
-
-<section class="calsec" id="calendar">
-  <div style="text-align:center">
-    <div class="sec-label">Verf&uuml;gbarkeit</div>
-    <h2 class="sec-title" id="calTitle2">Wann bist du <em>frei?</em></h2>
-  </div>
-  <div class="calwrap">
-    <div class="cal-nav-r">
-      <button class="cal-btn" onclick="calNav(-1)">&#8592;</button>
-      <div class="cal-mt" id="calMT"></div>
-      <button class="cal-btn" onclick="calNav(1)">&#8594;</button>
-    </div>
-    <div class="cgrid" id="calGrid"></div>
-    <div class="legend">
-      <span><span class="ldot av"></span><span id="leg1">Verf&uuml;gbar</span></span>
-      <span><span class="ldot un"></span><span id="leg2">Nicht verf&uuml;gbar</span></span>
     </div>
   </div>
 </section>
@@ -386,13 +556,13 @@ de:{
   gallTitle:'Die Wohnung im <em>\u00dcberblick</em>',
   featTitle:'Was dich <em>erwartet</em>',
   feats:[
-    {ic:'\u{1F30A}',t:'Meerblick & Terrasse',d:'Gro\u00dfe Terrasse mit direktem Meerblick \u2013 perfekt f\u00fcr Sonnenunterg\u00e4nge und Abende im Freien.'},
-    {ic:'\u{1F6CF}\uFE0F',t:'3 Schlafzimmer',d:'Drei helle, komfortable Schlafzimmer f\u00fcr bis zu 6 Personen.'},
-    {ic:'\u{1F6BF}',t:'2 Badezimmer',d:'Zwei moderne B\u00e4der, komplett neu renoviert.'},
-    {ic:'\u{1F373}',t:'Vollausgestattete K\u00fcche',d:'Moderne K\u00fcche mit Herd, Backofen, K\u00fchlschrank und allem N\u00f6tigen.'},
+    {ic:'🌊',t:'Meerblick & Terrasse',d:'Gro\u00dfe Terrasse mit direktem Meerblick \u2013 perfekt f\u00fcr Sonnenunterg\u00e4nge und Abende im Freien.'},
+    {ic:'🛏️',t:'3 Schlafzimmer',d:'Drei helle, komfortable Schlafzimmer f\u00fcr bis zu 6 Personen.'},
+    {ic:'🚿',t:'2 Badezimmer',d:'Zwei moderne B\u00e4der, komplett neu renoviert.'},
+    {ic:'🍳',t:'Vollausgestattete K\u00fcche',d:'Moderne K\u00fcche mit Herd, Backofen, K\u00fchlschrank und allem N\u00f6tigen.'},
     {ic:'\u2744\uFE0F',t:'Klimaanlage & WLAN',d:'Klimaanlage und schnelles WLAN inklusive.'},
-    {ic:'\u{1F3D6}\uFE0F',t:'50m zum sch\u00f6nen Strand',d:'Nur 50 Meter Fu\u00dfweg zum wundersch\u00f6nen Sandstrand direkt am Ortseingang.'},
-    {ic:'\u{1F6D2}',t:'Supermarkt nebenan',d:'Supermarkt sowie Obst- und Gem\u00fcsehandel in unmittelbarer N\u00e4he \u2013 bestens versorgt.'},
+    {ic:'🏖️',t:'50m zum sch\u00f6nen Strand',d:'Nur 50 Meter Fu\u00dfweg zum wundersch\u00f6nen Sandstrand direkt am Ortseingang.'},
+    {ic:'🛒',t:'Supermarkt nebenan',d:'Supermarkt sowie Obst- und Gem\u00fcsehandel in unmittelbarer N\u00e4he \u2013 bestens versorgt.'},
     {ic:'\u2615\uFE0F',t:'Caf\u00e9s & Restaurants',d:'Gem\u00fctliche Caf\u00e9s zum Fr\u00fchst\u00fccken und Restaurants f\u00fcr den Abend \u2013 alles direkt um die Ecke.'},
     {ic:'\u2728',t:'Komplett renoviert',d:'Die Wohnung wurde vollst\u00e4ndig neu renoviert und modern ausgestattet \u2013 alles neu, alles bereit.'},
   ],
@@ -422,13 +592,13 @@ it:{
   gallTitle:"L'appartamento in <em>dettaglio</em>",
   featTitle:'Cosa vi <em>aspetta</em>',
   feats:[
-    {ic:'\u{1F30A}',t:'Vista mare & Terrazza',d:"Ampia terrazza con vista diretta sul mare \u2013 perfetta per i tramonti e le serate all'aperto."},
-    {ic:'\u{1F6CF}\uFE0F',t:'3 Camere da letto',d:'Tre camere luminose e confortevoli per fino a 6 persone.'},
-    {ic:'\u{1F6BF}',t:'2 Bagni',d:'Due bagni moderni, completamente ristrutturati.'},
-    {ic:'\u{1F373}',t:'Cucina attrezzata',d:'Cucina moderna con piano cottura, forno, frigorifero e tutto il necessario.'},
+    {ic:'🌊',t:'Vista mare & Terrazza',d:"Ampia terrazza con vista diretta sul mare \u2013 perfetta per i tramonti e le serate all'aperto."},
+    {ic:'🛏️',t:'3 Camere da letto',d:'Tre camere luminose e confortevoli per fino a 6 persone.'},
+    {ic:'🚿',t:'2 Bagni',d:'Due bagni moderni, completamente ristrutturati.'},
+    {ic:'🍳',t:'Cucina moderna',d:'Cucina moderna con piano cottura, forno, frigorifero e tutto il necessario.'},
     {ic:'\u2744\uFE0F',t:'Aria condizionata & WiFi',d:'Aria condizionata e WiFi veloce incluso.'},
-    {ic:'\u{1F3D6}\uFE0F',t:'50m dalla spiaggia',d:"Solo 50 metri a piedi dalla bellissima spiaggia sabbiosa, all'ingresso del paese."},
-    {ic:'\u{1F6D2}',t:'Supermercato vicino',d:'Supermercato e negozio di frutta e verdura nelle immediate vicinanze.'},
+    {ic:'🏖️',t:'50m dalla spiaggia',d:"Solo 50 metri a piedi dalla bellissima spiaggia sabbiosa, all'ingresso del paese."},
+    {ic:'🛒',t:'Supermercato vicino',d:'Supermercato e negozio di frutta e verdura nelle immediate vicinanze.'},
     {ic:'\u2615\uFE0F',t:'Bar & Ristoranti',d:'Accoglienti bar per la colazione e ristoranti per la cena \u2013 tutto a due passi.'},
     {ic:'\u2728',t:'Completamente ristrutturato',d:'L\u2019appartamento \u00e8 stato completamente rinnovato con arredi moderni \u2013 tutto nuovo, tutto pronto.'},
   ],
@@ -466,17 +636,6 @@ function setLang(l){
   document.getElementById('s2').textContent=t.s2;
   document.getElementById('s3').textContent=t.s3;
   document.getElementById('gallTitle').innerHTML=t.gallTitle;
-  document.getElementById('featTitle').innerHTML=t.featTitle;
-  renderFeats(t.feats);
-  document.getElementById('priceTitle').innerHTML=t.priceTitle;
-  document.getElementById('pth1').textContent=t.pth1;
-  document.getElementById('pth2').textContent=t.pth2;
-  document.getElementById('pth3').textContent=t.pth3;
-  document.getElementById('priceNote').innerHTML=t.priceNote;
-  document.getElementById('priceAvail').textContent=t.priceAvail;
-  document.getElementById('calTitle2').innerHTML=t.calTitle2;
-  document.getElementById('leg1').textContent=t.leg1;
-  document.getElementById('leg2').textContent=t.leg2;
   document.getElementById('locTitle').innerHTML=t.locTitle;
   document.getElementById('ll1').textContent=t.ll1;
   document.getElementById('ll2').textContent=t.ll2;
@@ -494,62 +653,77 @@ function setLang(l){
   document.getElementById('chint').innerHTML=t.chint;
   document.getElementById('cbtn').textContent=t.cbtn;
   document.getElementById('fnote').innerHTML=t.fnote;
-  renderCal();
-}
-
-function renderFeats(feats){
-  document.getElementById('featGrid').innerHTML=feats.map(function(f){
-    return '<div class="fc"><div class="fc-icon">'+f.ic+'</div><div class="fc-title">'+f.t+'</div><div class="fc-text">'+f.d+'</div></div>';
-  }).join('');
+  updateBookingLang();
 }
 
 var slIdx=0;
+var carOrient=['landscape','landscape','portrait','landscape','landscape','portrait','portrait','landscape','landscape'];
 function renderGall(){
   var track=document.getElementById('sliderTrack');
   var dots=document.getElementById('slDots');
   track.innerHTML=gImgs.map(function(g,i){
-    return '<img src="'+g.src+'" alt="'+g.lbl+'" loading="lazy" onclick="lbOpen('+i+')">';
+    return '<div class="carousel-item '+carOrient[i]+'" onclick="lbOpen('+i+')"><img src="'+g.src+'" alt="'+g.lbl+'" loading="lazy"></div>';
   }).join('');
   dots.innerHTML=gImgs.map(function(g,i){
-    return '<div class="sl-dot'+(i===0?' active':'')+'" onclick="slGo('+i+')"></div>';
+    return '<button class="sl-dot'+(i===0?' active':'')+'" onclick="slGo('+i+')" aria-label="Bild '+(i+1)+'"></button>';
   }).join('');
+  document.getElementById('slCounter').textContent='1 / '+gImgs.length;
+  initDrag();
   slUpdate();
 }
 function slUpdate(){
-  document.getElementById('sliderTrack').style.transform='translateX(-'+(slIdx*100)+'%)';
+  var track=document.getElementById('sliderTrack');
+  var wrap=document.getElementById('carouselWrap');
+  var items=track.children;
+  if(items.length===0) return;
+
+  // Calculate total track width
+  var totalW=0;
+  for(var i=0;i<items.length;i++) totalW+=items[i].offsetWidth+12;
+  totalW-=12; // remove last gap
+
+  // Calculate offset to show active item
+  var offset=0;
+  for(var i=0;i<slIdx;i++) offset+=items[i].offsetWidth+12;
+  offset=Math.max(0, offset-52); // left padding
+
+  // Clamp: never scroll past the point where track end aligns with wrap end
+  var maxOffset=Math.max(0, totalW - wrap.offsetWidth + 52);
+  offset=Math.min(offset, maxOffset);
+
+  track.style.transform='translateX(-'+offset+'px)';
   document.getElementById('slCounter').textContent=(slIdx+1)+' / '+gImgs.length;
   var dots=document.getElementById('slDots').children;
   for(var i=0;i<dots.length;i++) dots[i].classList.toggle('active',i===slIdx);
 }
-function slNav(d){slIdx=(slIdx+d+gImgs.length)%gImgs.length;slUpdate();}
-function slGo(i){slIdx=i;slUpdate();}
+
+// Drag support
+function initDrag(){
+  var wrap=document.getElementById('carouselWrap');
+  var startX=0, isDragging=false;
+  wrap.addEventListener('mousedown',function(e){startX=e.clientX;isDragging=true;wrap.classList.add('dragging');});
+  wrap.addEventListener('mousemove',function(e){if(!isDragging) return;});
+  wrap.addEventListener('mouseup',function(e){
+    if(!isDragging) return; isDragging=false; wrap.classList.remove('dragging');
+    var diff=e.clientX-startX;
+    if(Math.abs(diff)>40){if(diff<0) slNav(1); else slNav(-1);}
+  });
+  wrap.addEventListener('mouseleave',function(){isDragging=false;wrap.classList.remove('dragging');});
+  // Touch
+  wrap.addEventListener('touchstart',function(e){startX=e.touches[0].clientX;},{passive:true});
+  wrap.addEventListener('touchend',function(e){
+    var diff=e.changedTouches[0].clientX-startX;
+    if(Math.abs(diff)>40){if(diff<0) slNav(1); else slNav(-1);}
+  },{passive:true});
+}
+function slNav(d){slIdx=Math.max(0,Math.min(slIdx+d,gImgs.length-1));slUpdate();}
+function slGo(i){slIdx=Math.max(0,Math.min(i,gImgs.length-1));slUpdate();}
 
 var lbIdx=0;
 function lbOpen(i){lbIdx=i;document.getElementById('lbImg').src=gImgs[i].src;document.getElementById('lb').classList.add('open');}
 function lbClose(){document.getElementById('lb').classList.remove('open');}
 function lbNav(d){lbIdx=(lbIdx+d+gImgs.length)%gImgs.length;document.getElementById('lbImg').src=gImgs[lbIdx].src;}
 document.addEventListener('keydown',function(e){if(e.key==='Escape')lbClose();if(e.key==='ArrowLeft')lbNav(-1);if(e.key==='ArrowRight')lbNav(1);});
-
-var calD=new Date(2025,6,1);
-function isAvail(d){var y=d.getFullYear(),m=d.getMonth();return y===2025&&m>=6&&m<=8;}
-function renderCal(){
-  var t=T[lang];
-  var y=calD.getFullYear(),m=calD.getMonth();
-  document.getElementById('calMT').textContent=t.cMonths[m]+' '+y;
-  var sd=new Date(y,m,1).getDay();sd=sd===0?6:sd-1;
-  var days=new Date(y,m+1,0).getDate();
-  var today=new Date();
-  var h=t.cDays.map(function(d){return '<div class="cdh">'+d+'</div>';}).join('');
-  for(var i=0;i<sd;i++)h+='<div class="cd empty"></div>';
-  for(var d=1;d<=days;d++){
-    var dt=new Date(y,m,d);
-    var av=isAvail(dt);
-    var tod=dt.toDateString()===today.toDateString();
-    h+='<div class="cd '+(av?'avail':'unav')+(tod?' tod':'')+'">'+d+'</div>';
-  }
-  document.getElementById('calGrid').innerHTML=h;
-}
-function calNav(d){calD.setMonth(calD.getMonth()+d);renderCal();}
 
 window.addEventListener('scroll',function(){
   document.getElementById('navLogo').classList.toggle('vis',window.scrollY>350);
@@ -559,8 +733,228 @@ window.addEventListener('scroll',function(){
 document.getElementById('heroBg').style.backgroundImage='url('+IMG_HERO_NEW+')';
 document.getElementById('locImg').src=IMG_STREET;
 renderGall();
-renderFeats(T.de.feats);
-renderCal();
+
+// ---- PRICING LOGIC ----
+var PRICES_WEEK = {2:1000, 3:1100, 4:1200, 5:1350, 6:1500};
+var PRICES_MONTH = {2:3500, 3:3700, 4:4000, 5:4600, 6:5000};
+var bookPersons = 2;
+var cpYear = 2025, cpMonth2 = 6; // July 2025 (0-based)
+var selCheckin = null, selCheckout = null;
+var picking = 'in'; // 'in' or 'out'
+
+// Available: July 1 – Sep 6 2025
+var MIN_DATE = new Date(2025,6,1);
+var MAX_DATE = new Date(2025,9,6);
+
+function setPersn(n){
+  bookPersons = n;
+  var btns = document.getElementById('personBtns').children;
+  for(var i=0;i<btns.length;i++) btns[i].classList.toggle('active', (i+2)===n);
+  updateBookAmt();
+  calcBreakdown();
+}
+
+function updateBookAmt(){
+  var isDE = (lang==='de');
+  var pw = PRICES_WEEK[bookPersons];
+  document.getElementById('bookAmt').textContent = pw.toLocaleString('de-DE') + ' €';
+  document.getElementById('bookUnit').textContent = (isDE?'/ Woche · ':'/ settimana · ') + bookPersons + (isDE?' Personen':' persone');
+}
+
+function cpNav(d){ cpMonth2 = Math.max(6, Math.min(8, cpMonth2+d)); renderCPCal(); }
+
+function renderCPCal(){
+  var isDE = (lang==='de');
+  var monthNames = isDE
+    ? ['Januar','Februar','M\u00e4rz','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember']
+    : ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
+  var dayNames = isDE ? ['Mo','Di','Mi','Do','Fr','Sa','So'] : ['Lu','Ma','Me','Gi','Ve','Sa','Do'];
+  
+  document.getElementById('cpMonth').textContent = monthNames[cpMonth2] + ' ' + cpYear;
+  document.getElementById('cpDaysHeader').innerHTML = dayNames.map(function(d){return '<div class="cp-dh">'+d+'</div>';}).join('');
+
+  var first = new Date(cpYear, cpMonth2, 1);
+  var sd = first.getDay(); sd = sd===0?6:sd-1;
+  var daysInMonth = new Date(cpYear, cpMonth2+1, 0).getDate();
+
+  // Build cells
+  var grid = document.getElementById('cpGrid');
+  grid.innerHTML = '';
+
+  for(var i=0;i<sd;i++){
+    var emp = document.createElement('div');
+    emp.className = 'cp-cell empty';
+    grid.appendChild(emp);
+  }
+
+  for(var d=1;d<=daysInMonth;d++){
+    var dt = new Date(cpYear, cpMonth2, d);
+    var isAvail = dt.getTime() >= MIN_DATE.getTime() && dt.getTime() < MAX_DATE.getTime();
+    var isCI = selCheckin && dt.getTime()===selCheckin.getTime();
+    var isCO = selCheckout && dt.getTime()===selCheckout.getTime();
+    var isRange = selCheckin && selCheckout && dt.getTime() > selCheckin.getTime() && dt.getTime() < selCheckout.getTime();
+    // When picking checkout: disable days before checkin+7
+    var minOut = selCheckin ? new Date(selCheckin.getTime() + 7*86400000) : null;
+    var isTooSoon = (picking==='out' && selCheckin && !selCheckout && dt.getTime() > selCheckin.getTime() && dt.getTime() < minOut.getTime());
+    var cell = document.createElement('div');
+    cell.className = 'cp-cell';
+    cell.textContent = d;
+    if(!isAvail || isTooSoon){
+      cell.className += ' disabled';
+    } else if(isCI){
+      cell.className += ' checkin';
+    } else if(isCO){
+      cell.className += ' checkout';
+    } else if(isRange){
+      cell.className += ' inrange';
+    } else {
+      cell.className += ' avail';
+      (function(date){ cell.addEventListener('click', function(){ cpClick(date); }); })(new Date(cpYear, cpMonth2, d));
+    }
+    if(isCI){
+      (function(date){ cell.addEventListener('click', function(){ cpClick(date); }); })(new Date(cpYear, cpMonth2, d));
+    }
+    if(isCO){
+      (function(date){ cell.addEventListener('click', function(){ cpClick(date); }); })(new Date(cpYear, cpMonth2, d));
+    }
+    grid.appendChild(cell);
+  }
+}
+
+function cpClick(dt){
+  var isDE = (lang==='de');
+  if(picking==='in' || (selCheckin && selCheckout)){
+    selCheckin = dt;
+    selCheckout = null;
+    picking = 'out';
+    document.getElementById('cpHint').textContent = isDE ? 'Check-out w\u00e4hlen' : 'Seleziona check-out';
+  } else {
+    var minOut = new Date(selCheckin.getTime() + 7*86400000);
+    if(dt.getTime() < minOut.getTime()){
+      return; // blocked - not enough days
+    }
+    selCheckout = dt;
+    picking = 'in';
+    document.getElementById('cpHint').textContent = formatDateDE(selCheckin) + ' \u2013 ' + formatDateDE(selCheckout);
+    calcBreakdown();
+  }
+  renderCPCal();
+}
+
+function formatDateDE(d){
+  if(!d) return '';
+  return d.getDate()+'.'+(d.getMonth()+1)+'.'+d.getFullYear();
+}
+
+function calcBreakdown(){
+  var isDE = (lang==='de');
+  var err = document.getElementById('bookError');
+  var bd = document.getElementById('bookBreakdown');
+  if(!selCheckin || !selCheckout){bd.classList.remove('visible');document.getElementById('monthHint').style.display='none';return;}
+  var diffDays = Math.round((selCheckout-selCheckin)/86400000);
+  err.classList.remove('visible');
+  var pw = PRICES_WEEK[bookPersons];
+  var pm = PRICES_MONTH[bookPersons];
+  var weeks = Math.floor(diffDays/7);
+  var extraDays = diffDays%7;
+  var pricePerNight = Math.round(pw/7);
+  var normalTotal = weeks*pw + extraDays*pricePerNight;
+  var isMonth = diffDays >= 28;
+  var total = isMonth ? pm : normalTotal;
+
+  document.getElementById('bb1l').textContent = weeks+(isDE?' Woche':' settimana')+(weeks>1?(isDE?'n':'e'):'')+' × '+pw.toLocaleString('de-DE')+' €'+(extraDays>0?(', '+extraDays+(isDE?' Nacht':' notte')+(extraDays>1?'e':'')):'');
+  document.getElementById('bb1v').textContent = normalTotal.toLocaleString('de-DE')+' €';
+
+  var monthRow = document.getElementById('bbMonthRow');
+  if(isMonth){
+    monthRow.style.display='flex';
+    document.getElementById('bb2l').textContent = isDE?'Monatsrabatt':'Sconto mensile';
+    document.getElementById('bb2v').textContent = '-'+(normalTotal-pm).toLocaleString('de-DE')+' €';
+  } else {
+    monthRow.style.display='none';
+  }
+
+  document.getElementById('bbtl').textContent = isDE?'Gesamt':'Totale';
+  document.getElementById('monthHint').style.display='block';
+  document.getElementById('monthHint').innerHTML = isDE?'\ud83c\udff7\ufe0f <strong>Monatsrabatt:</strong> Bei 4+ Wochen sparst du bis zu 1.000 \u20AC.':'\ud83c\udff7\ufe0f <strong>Sconto mensile:</strong> Con 4+ settimane risparmi fino a 1.000 \u20AC.';
+  document.getElementById('bbTotal').textContent = total.toLocaleString('de-DE')+' €';
+  bd.classList.add('visible');
+}
+
+function sendInquiry(){
+  if(!selCheckin||!selCheckout){
+    var isDE=(lang==='de');
+    document.getElementById('bookError').textContent=isDE?'Bitte wähle zuerst dein Reisedatum.':'Seleziona prima le date del soggiorno.';
+    document.getElementById('bookError').classList.add('visible');
+    return;
+  }
+  var total = document.getElementById('bbTotal').textContent;
+  var isDE=(lang==='de');
+  var subject = encodeURIComponent("Anfrage Casa dell'Arancio");
+  var body = encodeURIComponent(
+    (isDE?'Hallo Federico,\n\nIch interessiere mich für eine Buchung:\n\nCheck-in: ':'Ciao Federico,\n\nSono interessato/a a prenotare:\n\nCheck-in: ')
+    +formatDateDE(selCheckin)+'\n'
+    +(isDE?'Check-out: ':'Check-out: ')+formatDateDE(selCheckout)+'\n'
+    +(isDE?'Personen: ':'Persone: ')+bookPersons+'\n'
+    +(isDE?'Gesamtpreis: ':'Totale: ')+total+'\n\n'
+  );
+  window.location.href='mailto:federico.b@web.de?subject='+subject+'&body='+body;
+}
+
+// Update booking translations on lang switch
+function updateBookingLang(){
+  var isDE = (lang==='de');
+  document.getElementById('cfTitle').textContent = isDE?'Was dich erwartet':'Cosa ti aspetta';
+  document.getElementById('bookPersonsLabel').textContent = isDE?'Personen':'Persone';
+  document.getElementById('bookBtn').textContent = isDE?'Anfrage senden':'Invia richiesta';
+  document.getElementById('bookHint').textContent = isDE?'Du wirst nicht sofort belastet – wir melden uns per E-Mail.':'Non verrai addebitato subito – ti contatteremo via e-mail.';
+  // Stickers
+  if(isDE){
+    } else {
+    }
+  updateBookAmt();
+  renderCPCal();
+  if(selCheckin && selCheckout){
+    document.getElementById('cpHint').textContent = formatDateDE(selCheckin)+' – '+formatDateDE(selCheckout);
+  } else {
+    document.getElementById('cpHint').textContent = isDE?'Check-in wählen':'Seleziona check-in';
+  }
+  calcBreakdown();
+  renderCompactFeats();
+}
+
+function renderCompactFeats(){
+  var isDE = (lang==='de');
+  var feats = isDE ? [
+    {ic:'🌊', t:'Meerblick & Terrasse', d:'Sonnenschirm auf der Terrasse & Sitzlounge inklusive.'},
+    {ic:'🏖️', t:'50m zum Strand', d:'\u00dcber die Stra\u00dfe vor der Wohnung direkt zum Strand \u2013 auch ideal f\u00fcr Abendspazierr\u00e4nge.'},
+    {ic:'🛏️', t:'3 Schlafzimmer', d:'2 Doppelzimmer, 1 Zimmer mit 2 Einzelbetten, plus Schlafcouch.'},
+    {ic:'🚿', t:'2 Badezimmer', d:'Beide neu renoviert und hochwertig ausgestattet.'},
+    {ic:'🍳', t:'Moderne K\u00fcche', d:'Backofen, K\u00fchlschrank & alles f\u00fcr kurze wie lange Aufenthalte.'},
+    {ic:'\u2744\uFE0F', t:'Klimaanlage & WLAN', d:'Schnelles WLAN, auch f\u00fcr Remote Work. Klimaanlage in K\u00fcche & Flur.'},
+    {ic:'🛒', t:'Supermarkt nebenan', d:'Direkt an der Eingangst\u00fcr. 2. Supermarkt & Obst-/Gem\u00fcsehandel 2 Min. entfernt.'},
+    {ic:'\u2615\uFE0F', t:'Caf\u00e9s & Restaurants', d:'Lokale Tipps nach Buchung. Gute Auswahl im Ort & kurze Fahrt nach Marina di Ragusa.'},
+    {ic:'\u2728', t:'Komplett renoviert 2026', d:'Alles neu, gepflegt und in tadellosem Zustand.'},
+  ] : [
+    {ic:'🌊', t:'Vista mare & Terrazza', d:'Ampia terrazza con vista sul mare'},
+    {ic:'🏖️', t:'50m dalla spiaggia', d:'Bellissima spiaggia sabbiosa'},
+    {ic:'🛏️', t:'3 Camere da letto', d:'Fino a 6 persone'},
+    {ic:'🚿', t:'2 Bagni', d:'Completamente ristrutturati'},
+    {ic:'🍳', t:'Cucina moderna', d:'Con forno e frigorifero'},
+    {ic:'\u2744\uFE0F', t:'Aria condizionata & WiFi', d:'Internet veloce incluso'},
+    {ic:'🛒', t:'Supermercato vicino', d:'Tutto a portata di mano'},
+    {ic:'\u2615\uFE0F', t:'Bar & Ristoranti', d:'A due passi'},
+    {ic:'\u2728', t:'Completamente ristrutturato', d:'Tutto nuovo, tutto pronto'},
+  ];
+  document.getElementById('compactFeats').innerHTML = feats.map(function(f){
+    return '<div class="cf-item"><div class="cf-icon">'+f.ic+'</div><div class="cf-title">'+f.t+'</div><div class="cf-desc">'+f.d+'</div></div>';
+  }).join('');
+}
+
+// Init calendar
+renderCPCal();
+renderCompactFeats();
+
 </script>
 </body>
 </html>
