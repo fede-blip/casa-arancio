@@ -410,6 +410,35 @@ footer{background:var(--dark);padding:36px 52px;display:flex;justify-content:spa
   .compact-features{width:100%;box-sizing:border-box;}
   .person-btns{flex-wrap:wrap;}
 }
+
+@media(max-width:900px){
+  .hb-left{overflow:hidden;}
+  .compact-features{
+    display:flex;
+    flex-direction:row;
+    overflow-x:auto;
+    overflow-y:hidden;
+    scroll-snap-type:x mandatory;
+    -webkit-overflow-scrolling:touch;
+    gap:12px;
+    padding:4px 4px 12px;
+    grid-template-columns:unset;
+    grid-template-rows:unset;
+    background:transparent;
+    flex:unset;
+    scrollbar-width:none;
+  }
+  .compact-features::-webkit-scrollbar{display:none;}
+  .cf-item{
+    flex:0 0 72vw;
+    min-width:0;
+    scroll-snap-align:start;
+    border:1px solid #efefef;
+    border-radius:4px;
+    margin:0;
+    box-sizing:border-box;
+  }
+}
 </style>
   <!-- Open Graph / Social Media Preview -->
   <meta property="og:type" content="website">
