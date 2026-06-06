@@ -10,12 +10,13 @@
 :root{--sand:#f5f0e8;--white:#fefefe;--sea:#3a6b8a;--sea-l:#5b8fa8;--sea-p:#e8f0f5;--gold:#c8a96e;--dark:#1a1a1a;--text:#2d2d2d;--muted:#888;}
 *{margin:0;padding:0;box-sizing:border-box;} html{scroll-behavior:smooth;}
 body{font-family:'DM Sans',sans-serif;background:var(--white);color:var(--text);overflow-x:hidden;}
-.lang-bar{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content:flex-end;align-items:center;padding:12px 32px;background:rgba(255,255,255,0.93);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,.06);}
+.lang-bar{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content:flex-end;align-items:center;padding:10px 32px;background:rgba(255,255,255,0.96);backdrop-filter:blur(12px);border-bottom:1px solid rgba(0,0,0,.07);}
 .logo-nav{flex:1;font-family:'Cormorant Garamond',serif;font-size:1.1rem;color:var(--sea);opacity:0;transition:opacity .3s;letter-spacing:.04em;}
 .logo-nav.vis{opacity:1;}
-.lang-btn{padding:5px 14px;font-size:.75rem;font-weight:500;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;border:1.5px solid transparent;background:transparent;color:var(--muted);transition:all .2s;}
-.lang-btn.active{border-color:var(--sea);color:var(--sea);background:var(--sea-p);}
-.lang-btn:hover:not(.active){color:var(--text);border-color:#ccc;}
+.lang-switcher{display:flex;align-items:center;gap:2px;background:#f3f3f3;padding:3px;border-radius:4px;}
+.lang-btn{padding:6px 18px;font-size:.78rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;border:none;background:transparent;color:var(--muted);transition:all .2s;border-radius:3px;}
+.lang-btn.active{background:#fff;color:var(--sea);box-shadow:0 1px 4px rgba(0,0,0,.1);}
+.lang-btn:hover:not(.active){color:var(--text);}
 .hero{height:100vh;min-height:600px;position:relative;display:flex;align-items:flex-end;overflow:hidden;}
 .hero-bg{position:absolute;inset:0;background-size:cover;background-position:60% center;}
 .hero-ov{position:absolute;inset:0;background:linear-gradient(to top,rgba(15,25,35,.76) 0%,rgba(15,25,35,.18) 55%,transparent 100%);}
@@ -348,6 +349,45 @@ footer{background:var(--dark);padding:36px 52px;display:flex;justify-content:spa
   color:#aaa;
   line-height:1.5;
 }
+
+.hero-lang{
+  position:absolute;
+  top:35%;
+  left:50%;
+  transform:translate(-50%, -50%);
+  z-index:10;
+  display:flex;
+  align-items:center;
+  gap:0;
+  background:transparent;
+  border:1px solid rgba(255,255,255,0.25);
+  border-radius:40px;
+  padding:3px;
+}
+.hl-btn{
+  background:transparent;
+  border:none;
+  color:rgba(255,255,255,0.5);
+  font-family:'DM Sans',sans-serif;
+  font-size:.65rem;
+  font-weight:500;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  padding:4px 13px;
+  cursor:pointer;
+  border-radius:30px;
+  transition:all .2s;
+}
+.hl-btn.active{
+  background:rgba(255,255,255,0.2);
+  color:rgba(255,255,255,0.9);
+}
+.hl-btn:hover:not(.active){
+  color:rgba(255,255,255,0.75);
+}
+.hl-sep{
+  display:none;
+}
 </style>
   <!-- Open Graph / Social Media Preview -->
   <meta property="og:type" content="website">
@@ -369,15 +409,18 @@ footer{background:var(--dark);padding:36px 52px;display:flex;justify-content:spa
 
 <nav class="lang-bar">
   <div class="logo-nav" id="navLogo">Casa dell&rsquo;Arancio</div>
-  <div style="display:flex;gap:4px">
-    <button class="lang-btn active" onclick="setLang('de')" id="btn-de">DE</button>
-    <button class="lang-btn" onclick="setLang('it')" id="btn-it">IT</button>
-  </div>
+
 </nav>
 
 <section class="hero">
   <div class="hero-bg" id="heroBg"></div>
   <div class="hero-ov"></div>
+<div class="hero-lang" id="heroLang">
+  <button class="hl-btn active" onclick="setLang('de')" id="btn-de">DE</button>
+  <span class="hl-sep">|</span>
+  <button class="hl-btn" onclick="setLang('it')" id="btn-it">IT</button>
+</div>
+
   <div class="hero-cnt">
     <div class="eyebrow" id="eyebrow">Casuzze &middot; Sizilien &middot; 50m vom Strand</div>
     <h1>Casa dell&rsquo;<em>Arancio</em></h1>
@@ -625,8 +668,11 @@ it:{
 var lang='de';
 function setLang(l){
   lang=l;
-  document.getElementById('btn-de').classList.toggle('active',l==='de');
-  document.getElementById('btn-it').classList.toggle('active',l==='it');
+  // Update both nav and hero buttons
+  ['btn-de','btn-it'].forEach(function(id){
+    var el=document.getElementById(id);
+    if(el) el.classList.toggle('active',id==='btn-'+(l));
+  });
   var t=T[l];
   document.getElementById('eyebrow').textContent=t.eyebrow;
   document.getElementById('heroSub').textContent=t.heroSub;
