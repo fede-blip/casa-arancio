@@ -494,7 +494,7 @@ footer{background:var(--dark);padding:36px 52px;display:flex;justify-content:spa
 </section>
 
 <section class="sec" id="gallery">
-  <div class="sec-label">Fotogalerie</div>
+  <div class="sec-label" id="gallLabel">Fotogalerie</div>
   <h2 class="sec-title" id="gallTitle">Die Wohnung im <em>&Uuml;berblick</em></h2>
   <div class="gallery-outer">
     <div class="carousel-wrap" id="carouselWrap">
@@ -589,7 +589,7 @@ footer{background:var(--dark);padding:36px 52px;display:flex;justify-content:spa
 <section class="locsec" id="location">
   <div><img class="locimg" id="locImg" src="" alt="Casuzze"></div>
   <div>
-    <div class="sec-label">Lage</div>
+    <div class="sec-label" id="locLabel">Lage</div>
     <h2 class="sec-title" id="locTitle">Sizilien, wie es <em>sein soll</em></h2>
     <div class="litem"><div class="licon">&#128205;</div><div><div class="llabel" id="ll1">Adresse</div><div class="lval">Via dell&rsquo;Arancio 12, Casuzze (RG)</div></div></div>
     <div class="litem"><div class="licon">&#127754;</div><div><div class="llabel" id="ll2">Strand</div><div class="lval" id="lv2">50 Meter zu Fu&szlig; &ndash; wundersch&ouml;ner Sandstrand</div></div></div>
@@ -601,7 +601,7 @@ footer{background:var(--dark);padding:36px 52px;display:flex;justify-content:spa
 </section>
 
 <section class="consec" id="contact">
-  <div class="sec-label">Kontakt</div>
+  <div class="sec-label" id="conLabel">Kontakt</div>
   <h2 class="sec-title" id="conTitle">Dein Urlaub beginnt mit einer <em>Nachricht</em></h2>
   <p id="conSub">Schreib uns &ndash; wir freuen uns auf deine Anfrage und antworten so schnell wie m&ouml;glich.</p>
   <div class="cbox">
@@ -673,11 +673,13 @@ de:{
   cDays:['Mo','Di','Mi','Do','Fr','Sa','So'],
   cMonths:['Januar','Februar','M\u00e4rz','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'],
   leg1:'Verf\u00fcgbar',leg2:'Nicht verf\u00fcgbar',
+  locLabel:'Lage',
   locTitle:'Sizilien, wie es <em>sein soll</em>',
   ll1:'Adresse',ll2:'Strand',lv2:'50 Meter zu Fu\u00df \u2013 wundersch\u00f6ner Sandstrand',
   ll_marina:'Marina di Ragusa',lv_marina:'In der N\u00e4he \u2013 direkt per Fahrradstra\u00dfe erreichbar',ll3:'Restaurants &amp; Caf\u00e9s',lv3:'Direkt in der N\u00e4he \u2013 ideal zum Fr\u00fchst\u00fccken &amp; Abendessen',
   ll4:'Supermarkt &amp; Obst-/Gem\u00fcsehandel',lv4:'Alles des t\u00e4glichen Bedarfs in unmittelbarer N\u00e4he',
   ll5:'Flughafen Catania',lv5:'ca. 1,5 Stunden \u00b7 direkte Busverbindung',
+  conLabel:'Kontakt',
   conTitle:'Dein Urlaub beginnt mit einer <em>Nachricht</em>',
   conSub:'Schreib uns \u2013 wir freuen uns auf deine Anfrage und antworten so schnell wie m\u00f6glich.',
   chint:'Buchungsanfragen &amp; Informationen',cbtn:'E-Mail schreiben',
@@ -688,6 +690,7 @@ it:{
   heroSub:'Appartamento vacanze completamente ristrutturato con ampia terrazza vista mare \u2013 a 50 metri dalla spiaggia, nel cuore di Casuzze.',
   hbtn1:'Guarda le foto',hbtn2:'Richiedi informazioni',
   s1:'Camere da letto',s2:'Ospiti',s3:'dal mare',
+  gallLabel:'Galleria fotografica',
   gallTitle:"L'appartamento in <em>dettaglio</em>",
   featTitle:'Cosa vi <em>aspetta</em>',
   feats:[
@@ -709,11 +712,13 @@ it:{
   cDays:['Lu','Ma','Me','Gi','Ve','Sa','Do'],
   cMonths:['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'],
   leg1:'Disponibile',leg2:'Non disponibile',
+  locLabel:'Posizione',
   locTitle:'Sicilia, come <em>deve essere</em>',
   ll1:'Indirizzo',ll2:'Spiaggia',lv2:'50 metri a piedi \u2013 bellissima spiaggia sabbiosa',
   ll_marina:'Marina di Ragusa',lv_marina:'Nelle vicinanze \u2013 raggiungibile direttamente in bicicletta',ll3:'Ristoranti &amp; Bar',lv3:'Nelle immediate vicinanze \u2013 ideali per colazione e cena',
   ll4:'Supermercato &amp; Fruttivendolo',lv4:'Tutto il necessario a portata di mano',
   ll5:'Aeroporto Catania',lv5:'circa 1,5 ore \u00b7 collegamento diretto in autobus',
+  conLabel:'Contatti',
   conTitle:'La vostra vacanza inizia con un <em>messaggio</em>',
   conSub:'Scriveteci \u2013 siamo felici della vostra richiesta e risponderemo il prima possibile.',
   chint:'Prenotazioni &amp; informazioni',cbtn:'Scrivi una e-mail',
@@ -724,6 +729,7 @@ en:{
   heroSub:'Fully renovated holiday apartment with large terrace and direct sea view \u2013 50 metres from the beach, in the heart of Casuzze.',
   hbtn1:'See photos',hbtn2:'Send inquiry',
   s1:'Bedrooms',s2:'Guests',s3:'to beach',
+  gallLabel:'Photo gallery',
   gallTitle:'The apartment in <em>detail</em>',
   featTitle:'What to <em>expect</em>',
   feats:[
@@ -745,12 +751,14 @@ en:{
   cDays:['Mo','Tu','We','Th','Fr','Sa','Su'],
   cMonths:['January','February','March','April','May','June','July','August','September','October','November','December'],
   leg1:'Available',leg2:'Not available',
+  locLabel:'Location',
   locTitle:'Sicily, <em>as it should be</em>',
   ll1:'Address',ll2:'Beach',lv2:'50 metres on foot \u2013 beautiful sandy beach',
   ll_marina:'Marina di Ragusa',lv_marina:'Nearby \u2013 reachable directly by cycle path',
   ll3:'Restaurants &amp; Caf\u00e9s',lv3:'Right nearby \u2013 great for breakfast &amp; dinner',
   ll4:'Supermarket &amp; fresh produce',lv4:'Everything you need within walking distance',
   ll5:'Catania Airport',lv5:'approx. 1.5 hours \u00b7 direct bus connection',
+  conLabel:'Contact',
   conTitle:'Your holiday starts with a <em>message</em>',
   conSub:'Write to us \u2013 we look forward to your enquiry and will reply as soon as possible.',
   chint:'Bookings &amp; enquiries',cbtn:'Send an email',
@@ -775,7 +783,9 @@ function setLang(l){
   document.getElementById('s1').textContent=t.s1;
   document.getElementById('s2').textContent=t.s2;
   document.getElementById('s3').textContent=t.s3;
+  document.getElementById('gallLabel').textContent=t.gallLabel;
   document.getElementById('gallTitle').innerHTML=t.gallTitle;
+  document.getElementById('locLabel').textContent=t.locLabel;
   document.getElementById('locTitle').innerHTML=t.locTitle;
   document.getElementById('ll1').textContent=t.ll1;
   document.getElementById('ll2').textContent=t.ll2;
@@ -788,6 +798,7 @@ function setLang(l){
   document.getElementById('lv4').textContent=t.lv4;
   document.getElementById('ll5').textContent=t.ll5;
   document.getElementById('lv5').textContent=t.lv5;
+  document.getElementById('conLabel').textContent=t.conLabel;
   document.getElementById('conTitle').innerHTML=t.conTitle;
   document.getElementById('conSub').textContent=t.conSub;
   document.getElementById('chint').innerHTML=t.chint;
