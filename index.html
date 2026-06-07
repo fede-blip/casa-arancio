@@ -1125,11 +1125,29 @@ function loadBookedDates() {
       bookedRanges = [];
       var lines = csv.trim().split('\n').slice(1);
       lines.forEach(function(line){
-        // gviz wraps values in quotes: "2025-07-01","2025-07-08","note"
-        var parts = line.split(',').map(function(p){ return p.trim().replace(/^"|"$/g,''); });
+        // Parse CSV respecting quoted fields (gviz Date format has commas inside)
+        var parts = [];
+        var cur = ''; var inQ = false;
+        for(var i=0;i<line.length;i++){
+          if(line[i]==='"'){ inQ=!inQ; }
+          else if(line[i]===','&&!inQ){ parts.push(cur.trim()); cur=''; }
+          else { cur+=line[i]; }
+        }
+        parts.push(cur.trim());
         if(parts.length >= 2 && parts[0]){
-          var from = new Date(parts[0]);
-          var to   = new Date(parts[1]);
+          // Parse as local date - handle both YYYY-MM-DD and gviz Date() format
+          function parseLocalDate(s){
+            s = s.replace(/"/g,'').trim();
+            // Handle gviz format: Date(2025,6,1) where month is 0-based
+            var gviz = s.match(/Date\((\d+),(\d+),(\d+)\)/);
+            if(gviz) return new Date(parseInt(gviz[1]), parseInt(gviz[2]), parseInt(gviz[3]));
+            // Handle YYYY-MM-DD
+            var p = s.split('-');
+            if(p.length===3) return new Date(parseInt(p[0]), parseInt(p[1])-1, parseInt(p[2]));
+            return new Date(s);
+          }
+          var from = parseLocalDate(parts[0]);
+          var to   = parseLocalDate(parts[1]);
           if(!isNaN(from) && !isNaN(to)){
             bookedRanges.push({from:from, to:to});
           }
