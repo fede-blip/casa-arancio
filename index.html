@@ -96,7 +96,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--white);color:var(--text);
 .cd.tod{font-weight:600;}
 .legend{display:flex;gap:24px;margin-top:18px;font-size:.82rem;}
 .ldot{display:inline-block;width:12px;height:12px;border-radius:2px;margin-right:6px;vertical-align:middle;}
-.ldot.av{background:#e8f5ee;border:1px solid #2a7a4b;}.ldot.un{background:#f5f5f5;border:1px solid #ddd;}
+.ldot.av{background:#e8f5ee;border:1px solid #2a7a4b;}.ldot.un{background:#f5f5f5;border:1px solid #ddd;}.ldot.bk{background:#fdf0ef;border:1px solid #e0a0a0;}
 .locsec{padding:96px 52px;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;}
 .locimg{width:100%;aspect-ratio:4/3;object-fit:cover;}
 .litem{display:flex;gap:16px;align-items:flex-start;padding:18px 0;border-bottom:1px solid #eee;}
@@ -444,6 +444,8 @@ footer{background:var(--dark);padding:36px 52px;display:flex;justify-content:spa
     box-sizing:border-box;
   }
 }
+
+.cp-cell.booked{background:#fdf0ef;color:#e0a0a0;cursor:not-allowed;text-decoration:line-through;}
 </style>
   <!-- Open Graph / Social Media Preview -->
   <meta property="og:type" content="website">
@@ -672,7 +674,7 @@ de:{
   calTitle2:'Wann bist du <em>frei?</em>',
   cDays:['Mo','Di','Mi','Do','Fr','Sa','So'],
   cMonths:['Januar','Februar','M\u00e4rz','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'],
-  leg1:'Verf\u00fcgbar',leg2:'Nicht verf\u00fcgbar',
+  leg1:'Verf\u00fcgbar',leg2:'Nicht verf\u00fcgbar',leg3:'Gebucht',
   locLabel:'Lage',
   locTitle:'Sizilien, wie es <em>sein soll</em>',
   ll1:'Adresse',ll2:'Strand',lv2:'50 Meter zu Fu\u00df \u2013 wundersch\u00f6ner Sandstrand',
@@ -711,7 +713,7 @@ it:{
   calTitle2:'Quando siete <em>liberi?</em>',
   cDays:['Lu','Ma','Me','Gi','Ve','Sa','Do'],
   cMonths:['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'],
-  leg1:'Disponibile',leg2:'Non disponibile',
+  leg1:'Disponibile',leg2:'Non disponibile',leg3:'Prenotato',
   locLabel:'Posizione',
   locTitle:'Sicilia, come <em>deve essere</em>',
   ll1:'Indirizzo',ll2:'Spiaggia',lv2:'50 metri a piedi \u2013 bellissima spiaggia sabbiosa',
@@ -750,7 +752,7 @@ en:{
   calTitle2:'When are you <em>free?</em>',
   cDays:['Mo','Tu','We','Th','Fr','Sa','Su'],
   cMonths:['January','February','March','April','May','June','July','August','September','October','November','December'],
-  leg1:'Available',leg2:'Not available',
+  leg1:'Available',leg2:'Not available',leg3:'Booked',
   locLabel:'Location',
   locTitle:'Sicily, <em>as it should be</em>',
   ll1:'Address',ll2:'Beach',lv2:'50 metres on foot \u2013 beautiful sandy beach',
@@ -941,7 +943,8 @@ function renderCPCal(){
 
   for(var d=1;d<=daysInMonth;d++){
     var dt = new Date(cpYear, cpMonth2, d);
-    var isAvail = dt.getTime() >= MIN_DATE.getTime() && dt.getTime() < MAX_DATE.getTime();
+    var isAvail = dt.getTime() >= MIN_DATE.getTime() && dt.getTime() < MAX_DATE.getTime() && !isBooked(dt);
+    var isBookedDay = dt.getTime() >= MIN_DATE.getTime() && dt.getTime() < MAX_DATE.getTime() && isBooked(dt);
     var isCI = selCheckin && dt.getTime()===selCheckin.getTime();
     var isCO = selCheckout && dt.getTime()===selCheckout.getTime();
     var isRange = selCheckin && selCheckout && dt.getTime() > selCheckin.getTime() && dt.getTime() < selCheckout.getTime();
@@ -951,7 +954,9 @@ function renderCPCal(){
     var cell = document.createElement('div');
     cell.className = 'cp-cell';
     cell.textContent = d;
-    if(!isAvail || isTooSoon){
+    if(isBookedDay){
+      cell.className += ' booked';
+    } else if(!isAvail || isTooSoon){
       cell.className += ' disabled';
     } else if(isCI){
       cell.className += ' checkin';
@@ -1103,7 +1108,46 @@ function renderCompactFeats(){
   }).join('');
 }
 
+
+// ---- BOOKED DATES (Google Sheets) ----
+var SHEET_ID = '101bJIal4t7Pclq12Slw2u_hyaotoZeX9F--y89Dmwdc';
+var bookedRanges = []; // {from: Date, to: Date}
+
+function loadBookedDates() {
+  // Use gviz/tq endpoint which supports CORS for public sheets
+  var url = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/gviz/tq?tqx=out:csv&sheet=Sheet1';
+  fetch(url, {mode:'cors'})
+    .then(function(r){
+      if(!r.ok) throw new Error('HTTP '+r.status);
+      return r.text();
+    })
+    .then(function(csv){
+      bookedRanges = [];
+      var lines = csv.trim().split('\n').slice(1);
+      lines.forEach(function(line){
+        // gviz wraps values in quotes: "2025-07-01","2025-07-08","note"
+        var parts = line.split(',').map(function(p){ return p.trim().replace(/^"|"$/g,''); });
+        if(parts.length >= 2 && parts[0]){
+          var from = new Date(parts[0]);
+          var to   = new Date(parts[1]);
+          if(!isNaN(from) && !isNaN(to)){
+            bookedRanges.push({from:from, to:to});
+          }
+        }
+      });
+      renderCPCal();
+    })
+    .catch(function(e){ console.warn('Could not load bookings:', e); });
+}
+
+function isBooked(dt) {
+  return bookedRanges.some(function(r){
+    return dt.getTime() >= r.from.getTime() && dt.getTime() < r.to.getTime();
+  });
+}
+
 // Init calendar
+loadBookedDates();
 renderCPCal();
 renderCompactFeats();
 
