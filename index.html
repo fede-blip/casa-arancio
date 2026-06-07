@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="de" translate="no">
 <head>
 <meta charset="UTF-8">
+  <meta name="google" content="notranslate">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Casa dell'Arancio &ndash; Casuzze, Sicilia</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -472,8 +473,8 @@ footer{background:var(--dark);padding:36px 52px;display:flex;justify-content:spa
   <div class="hero-ov"></div>
 <div class="hero-lang" id="heroLang">
   <button class="hl-btn active" onclick="setLang('de')" id="btn-de">DE</button>
-  <span class="hl-sep">|</span>
   <button class="hl-btn" onclick="setLang('it')" id="btn-it">IT</button>
+  <button class="hl-btn" onclick="setLang('en')" id="btn-en">EN</button>
 </div>
 
   <div class="hero-cnt">
@@ -718,15 +719,53 @@ it:{
   chint:'Prenotazioni &amp; informazioni',cbtn:'Scrivi una e-mail',
   fnote:'Affitto privato<br>Solo per amici &amp; famiglia',
 },
+en:{
+  eyebrow:'Casuzze \u00b7 Sicily \u00b7 50m from the beach',
+  heroSub:'Fully renovated holiday apartment with large terrace and direct sea view \u2013 50 metres from the beach, in the heart of Casuzze.',
+  hbtn1:'See photos',hbtn2:'Send inquiry',
+  s1:'Bedrooms',s2:'Guests',s3:'to beach',
+  gallTitle:'The apartment in <em>detail</em>',
+  featTitle:'What to <em>expect</em>',
+  feats:[
+    {ic:'🌊',t:'Sea view & Terrace',d:'Large terrace with direct sea view. Parasol on the terrace & lounge seating included.'},
+    {ic:'🛏️',t:'3 Bedrooms',d:'2 double rooms, 1 room with 2 single beds, plus sofa bed. Up to 6 guests.'},
+    {ic:'🚿',t:'2 Bathrooms',d:'Both fully renovated and fitted to a high standard.'},
+    {ic:'🍳',t:'Modern Kitchen',d:'Oven, fridge & everything you need for short or long stays.'},
+    {ic:'\u2744\uFE0F',t:'A/C & WiFi',d:'Fast WiFi, great for remote work. A/C in kitchen & hallway.'},
+    {ic:'🏖️',t:'50m to the beach',d:'Cross the street in front and you are at the beach. Perfect for evening walks too.'},
+    {ic:'🛒',t:'Supermarket next door',d:'Right at the front door. Second supermarket & fresh produce stall 2 min away.'},
+    {ic:'\u2615\uFE0F',t:'Cafés & Restaurants',d:'Local tips included after booking. Great choice in town & short drive to Marina di Ragusa.'},
+    {ic:'\u2728',t:'Fully renovated 2026',d:'Everything new, clean and in perfect condition.'},
+  ],
+  priceTitle:'Simple &amp; <em>transparent</em>',
+  pth1:'Guests',pth2:'per week',pth3:'per night',
+  priceNote:'Minimum stay 1 week \u00b7 Bed linen &amp; towels included \u00b7 Monthly rate on request',
+  priceAvail:'Available 1 July \u2013 30 September',
+  calTitle2:'When are you <em>free?</em>',
+  cDays:['Mo','Tu','We','Th','Fr','Sa','Su'],
+  cMonths:['January','February','March','April','May','June','July','August','September','October','November','December'],
+  leg1:'Available',leg2:'Not available',
+  locTitle:'Sicily, <em>as it should be</em>',
+  ll1:'Address',ll2:'Beach',lv2:'50 metres on foot \u2013 beautiful sandy beach',
+  ll_marina:'Marina di Ragusa',lv_marina:'Nearby \u2013 reachable directly by cycle path',
+  ll3:'Restaurants &amp; Caf\u00e9s',lv3:'Right nearby \u2013 great for breakfast &amp; dinner',
+  ll4:'Supermarket &amp; fresh produce',lv4:'Everything you need within walking distance',
+  ll5:'Catania Airport',lv5:'approx. 1.5 hours \u00b7 direct bus connection',
+  conTitle:'Your holiday starts with a <em>message</em>',
+  conSub:'Write to us \u2013 we look forward to your enquiry and will reply as soon as possible.',
+  chint:'Bookings &amp; enquiries',cbtn:'Send an email',
+  fnote:'Privately rented holiday property<br>For friends &amp; family only',
+}
 };
 
 var lang='de';
 function setLang(l){
   lang=l;
+  document.documentElement.lang=l;
   // Update both nav and hero buttons
-  ['btn-de','btn-it'].forEach(function(id){
+  ['btn-de','btn-it','btn-en'].forEach(function(id){
     var el=document.getElementById(id);
-    if(el) el.classList.toggle('active',id==='btn-'+(l));
+    if(el) el.classList.toggle('active',id==='btn-'+l);
   });
   var t=T[l];
   document.getElementById('eyebrow').textContent=t.eyebrow;
@@ -859,17 +898,18 @@ function updateBookAmt(){
   var isDE = (lang==='de');
   var pw = PRICES_WEEK[bookPersons];
   document.getElementById('bookAmt').textContent = pw.toLocaleString('de-DE') + ' €';
-  document.getElementById('bookUnit').textContent = (isDE?'/ Woche · ':'/ settimana · ') + bookPersons + (isDE?' Personen':' persone');
+  document.getElementById('bookUnit').textContent = (lang==='de'?'/ Woche · ':lang==='it'?'/ settimana · ':'/ week · ') + bookPersons + (lang==='de'?' Personen':lang==='it'?' persone':' guests');
 }
 
 function cpNav(d){ cpMonth2 = Math.max(6, Math.min(8, cpMonth2+d)); renderCPCal(); }
 
 function renderCPCal(){
   var isDE = (lang==='de');
-  var monthNames = isDE
+  var monthNames = lang==='de'
     ? ['Januar','Februar','M\u00e4rz','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember']
-    : ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
-  var dayNames = isDE ? ['Mo','Di','Mi','Do','Fr','Sa','So'] : ['Lu','Ma','Me','Gi','Ve','Sa','Do'];
+    : lang==='it' ? ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre']
+    : ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  var dayNames = lang==='de' ? ['Mo','Di','Mi','Do','Fr','Sa','So'] : lang==='it' ? ['Lu','Ma','Me','Gi','Ve','Sa','Do'] : ['Mo','Tu','We','Th','Fr','Sa','Su'];
   
   document.getElementById('cpMonth').textContent = monthNames[cpMonth2] + ' ' + cpYear;
   document.getElementById('cpDaysHeader').innerHTML = dayNames.map(function(d){return '<div class="cp-dh">'+d+'</div>';}).join('');
@@ -928,7 +968,7 @@ function cpClick(dt){
     selCheckin = dt;
     selCheckout = null;
     picking = 'out';
-    document.getElementById('cpHint').textContent = isDE ? 'Check-out w\u00e4hlen' : 'Seleziona check-out';
+    document.getElementById('cpHint').textContent = lang==='de'?'Check-out w\u00e4hlen':lang==='it'?'Seleziona check-out':'Select check-out';
   } else {
     var minOut = new Date(selCheckin.getTime() + 7*86400000);
     if(dt.getTime() < minOut.getTime()){
@@ -948,7 +988,7 @@ function formatDateDE(d){
 }
 
 function calcBreakdown(){
-  var isDE = (lang==='de');
+  var isDE = (lang==='de'); var isIT=(lang==='it');
   var err = document.getElementById('bookError');
   var bd = document.getElementById('bookBreakdown');
   if(!selCheckin || !selCheckout){bd.classList.remove('visible');document.getElementById('monthHint').style.display='none';return;}
@@ -963,21 +1003,21 @@ function calcBreakdown(){
   var isMonth = diffDays >= 28;
   var total = isMonth ? pm : normalTotal;
 
-  document.getElementById('bb1l').textContent = weeks+(isDE?' Woche':' settimana')+(weeks>1?(isDE?'n':'e'):'')+' × '+pw.toLocaleString('de-DE')+' €'+(extraDays>0?(', '+extraDays+(isDE?' Nacht':' notte')+(extraDays>1?'e':'')):'');
+  document.getElementById('bb1l').textContent = weeks+(lang==='de'?' Woche':lang==='it'?' settimana':' week')+(weeks>1?(isDE?'n':'e'):'')+' × '+pw.toLocaleString('de-DE')+' €'+(extraDays>0?(', '+extraDays+(lang==='de'?' Nacht':lang==='it'?' notte':' night')+(extraDays>1?'e':'')):'');
   document.getElementById('bb1v').textContent = normalTotal.toLocaleString('de-DE')+' €';
 
   var monthRow = document.getElementById('bbMonthRow');
   if(isMonth){
     monthRow.style.display='flex';
-    document.getElementById('bb2l').textContent = isDE?'Monatsrabatt':'Sconto mensile';
+    document.getElementById('bb2l').textContent = lang==='de'?'Monatsrabatt':lang==='it'?'Sconto mensile':'Monthly discount';
     document.getElementById('bb2v').textContent = '-'+(normalTotal-pm).toLocaleString('de-DE')+' €';
   } else {
     monthRow.style.display='none';
   }
 
-  document.getElementById('bbtl').textContent = isDE?'Gesamt':'Totale';
+  document.getElementById('bbtl').textContent = lang==='de'?'Gesamt':lang==='it'?'Totale':'Total';
   document.getElementById('monthHint').style.display='block';
-  document.getElementById('monthHint').innerHTML = isDE?'\ud83c\udff7\ufe0f <strong>Monatsrabatt:</strong> Bei 4+ Wochen sparst du bis zu 1.000 \u20AC.':'\ud83c\udff7\ufe0f <strong>Sconto mensile:</strong> Con 4+ settimane risparmi fino a 1.000 \u20AC.';
+  document.getElementById('monthHint').innerHTML = lang==='de'?'\ud83c\udff7\ufe0f <strong>Monatsrabatt:</strong> Bei 4+ Wochen sparst du bis zu 1.000 \u20AC.':lang==='it'?'\ud83c\udff7\ufe0f <strong>Sconto mensile:</strong> Con 4+ settimane risparmi fino a 1.000 \u20AC.':'\ud83c\udff7\ufe0f <strong>Monthly discount:</strong> Save up to \u20AC1,000 with 4+ weeks.';
   document.getElementById('bbTotal').textContent = total.toLocaleString('de-DE')+' €';
   bd.classList.add('visible');
 }
@@ -990,14 +1030,14 @@ function sendInquiry(){
     return;
   }
   var total = document.getElementById('bbTotal').textContent;
-  var isDE=(lang==='de');
-  var subject = encodeURIComponent("Anfrage Casa dell'Arancio");
+  var isDE=(lang==='de'); var isEN=(lang==='en');
+  var subject = encodeURIComponent("Enquiry Casa dell'Arancio");
   var body = encodeURIComponent(
     (isDE?'Hallo Federico,\n\nIch interessiere mich für eine Buchung:\n\nCheck-in: ':'Ciao Federico,\n\nSono interessato/a a prenotare:\n\nCheck-in: ')
     +formatDateDE(selCheckin)+'\n'
-    +(isDE?'Check-out: ':'Check-out: ')+formatDateDE(selCheckout)+'\n'
-    +(isDE?'Personen: ':'Persone: ')+bookPersons+'\n'
-    +(isDE?'Gesamtpreis: ':'Totale: ')+total+'\n\n'
+    +'Check-out: '+formatDateDE(selCheckout)+'\n'
+    +(lang==='de'?'Personen: ':lang==='it'?'Persone: ':'Guests: ')+bookPersons+'\n'
+    +(lang==='de'?'Gesamtpreis: ':lang==='it'?'Totale: ':'Total: ')+total+'\n\n'
   );
   window.location.href='mailto:federico.b@web.de?subject='+subject+'&body='+body;
 }
@@ -1005,10 +1045,10 @@ function sendInquiry(){
 // Update booking translations on lang switch
 function updateBookingLang(){
   var isDE = (lang==='de');
-  document.getElementById('cfTitle').textContent = isDE?'Was dich erwartet':'Cosa ti aspetta';
-  document.getElementById('bookPersonsLabel').textContent = isDE?'Personen':'Persone';
-  document.getElementById('bookBtn').textContent = isDE?'Anfrage senden':'Invia richiesta';
-  document.getElementById('bookHint').textContent = isDE?'Du wirst nicht sofort belastet – wir melden uns per E-Mail.':'Non verrai addebitato subito – ti contatteremo via e-mail.';
+  document.getElementById('cfTitle').textContent = lang==='de'?'Was dich erwartet':lang==='it'?'Cosa ti aspetta':'What to expect';
+  document.getElementById('bookPersonsLabel').textContent = lang==='de'?'Personen':lang==='it'?'Persone':'Guests';
+  document.getElementById('bookBtn').textContent = lang==='de'?'Anfrage senden':lang==='it'?'Invia richiesta':'Send inquiry';
+  document.getElementById('bookHint').textContent = lang==='de'?'Du wirst nicht sofort belastet – wir melden uns per E-Mail.':lang==='it'?'Non verrai addebitato subito – ti contatteremo via e-mail.':'You will not be charged yet – we will get back to you by email.';
   // Stickers
   if(isDE){
     } else {
@@ -1018,7 +1058,7 @@ function updateBookingLang(){
   if(selCheckin && selCheckout){
     document.getElementById('cpHint').textContent = formatDateDE(selCheckin)+' – '+formatDateDE(selCheckout);
   } else {
-    document.getElementById('cpHint').textContent = isDE?'Check-in wählen':'Seleziona check-in';
+    document.getElementById('cpHint').textContent = lang==='de'?'Check-in wählen':lang==='it'?'Seleziona check-in':'Select check-in';
   }
   calcBreakdown();
   renderCompactFeats();
@@ -1026,7 +1066,7 @@ function updateBookingLang(){
 
 function renderCompactFeats(){
   var isDE = (lang==='de');
-  var feats = isDE ? [
+  var feats = lang==='en' ? T.en.feats : isDE ? [
     {ic:'🌊', t:'Meerblick & Terrasse', d:'Sonnenschirm auf der Terrasse & Sitzlounge inklusive.'},
     {ic:'🏖️', t:'50m zum Strand', d:'\u00dcber die Stra\u00dfe vor der Wohnung direkt zum Strand \u2013 auch ideal f\u00fcr Abendspazierr\u00e4nge.'},
     {ic:'🛏️', t:'3 Schlafzimmer', d:'2 Doppelzimmer, 1 Zimmer mit 2 Einzelbetten, plus Schlafcouch.'},
@@ -1036,7 +1076,7 @@ function renderCompactFeats(){
     {ic:'🛒', t:'Supermarkt nebenan', d:'Direkt an der Eingangst\u00fcr. 2. Supermarkt & Obst-/Gem\u00fcsehandel 2 Min. entfernt.'},
     {ic:'\u2615\uFE0F', t:'Caf\u00e9s & Restaurants', d:'Lokale Tipps nach Buchung. Gute Auswahl im Ort & kurze Fahrt nach Marina di Ragusa.'},
     {ic:'\u2728', t:'Komplett renoviert 2026', d:'Alles neu, gepflegt und in tadellosem Zustand.'},
-  ] : [
+  ] : lang==='it' ? [
     {ic:'🌊', t:'Vista mare & Terrazza', d:'Ampia terrazza con vista sul mare'},
     {ic:'🏖️', t:'50m dalla spiaggia', d:'Bellissima spiaggia sabbiosa'},
     {ic:'🛏️', t:'3 Camere da letto', d:'Fino a 6 persone'},
@@ -1046,7 +1086,7 @@ function renderCompactFeats(){
     {ic:'🛒', t:'Supermercato vicino', d:'Tutto a portata di mano'},
     {ic:'\u2615\uFE0F', t:'Bar & Ristoranti', d:'A due passi'},
     {ic:'\u2728', t:'Completamente ristrutturato', d:'Tutto nuovo, tutto pronto'},
-  ];
+  ] : T.en.feats;
   document.getElementById('compactFeats').innerHTML = feats.map(function(f){
     return '<div class="cf-item"><div class="cf-icon">'+f.ic+'</div><div class="cf-title">'+f.t+'</div><div class="cf-desc">'+f.d+'</div></div>';
   }).join('');
